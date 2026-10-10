@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.2] - 2026-10-10
+
+### Changed
+- Plugin icon for the directory listing: `.claude-plugin/icon.png` (remote-control artwork, no Roku logo or wordmark).
+
 ## [1.8.1] - 2026-10-10
 
 ### Changed

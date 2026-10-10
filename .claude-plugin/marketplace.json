@@ -5,14 +5,14 @@
   },
   "metadata": {
     "description": "Marketplace for the roku-mcp plugin (Roku MCP server plus workflow skills).",
-    "version": "1.8.1"
+    "version": "1.8.2"
   },
   "plugins": [
     {
       "name": "roku-mcp",
       "source": "./",
       "description": "Roku app automation, profiling, and stream diagnosis for dev devices.",
-      "version": "1.8.1",
+      "version": "1.8.2",
       "category": "tools",
       "tags": ["roku", "brightscript", "ecp", "mcp", "automation", "profiling"],
       "strict": false
