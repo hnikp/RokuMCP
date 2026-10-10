@@ -1,5 +1,16 @@
 # Changelog
 
+## [1.8.0] - 2026-10-10
+
+### Added
+- Plugin mode for Claude Code (`.claude-plugin/`, `.mcp.json`) and Cursor (`.cursor-plugin/`, `mcp.json`), sharing `skills/` (install, deploy-debug, ecp-control, runtime-ui-editing, stream-diagnosis, bsprof-profiling, perfetto-tracing) and `rules/cursor/`.
+- `scripts/launch.sh`: plugin launcher. Runs `npm ci` and build on first start; logs go to stderr so stdout stays clean for MCP.
+
+### Security
+- Pin `fast-xml-parser` to `^5.7.0` via `overrides` (fixes GHSA-gh4j-gqv2-49f6 in the nested copy under `roku-perfetto`, which pins `^4.5.0`).
+- `npm audit fix` applied: clears the critical `proxy-addr` and most highs in `express`, `axios`, `ws`, `hono`, `qs`, `path-to-regexp`, and `@modelcontextprotocol/sdk`.
+- Known unfixed: `braces` `<=3.0.3` (stack-exhaustion DoS via deeply nested patterns) reached through `roku-deploy` → `fast-glob`/`micromatch`. No patched release on npm. Prod audit: 4 high, all `braces`.
+
 ## [1.7.0] - 2026-06-05
 
 ### Added

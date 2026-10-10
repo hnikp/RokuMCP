@@ -1,0 +1,17 @@
+{
+  "name": "roku-mcp-marketplace",
+  "owner": {
+    "name": "jack1590"
+  },
+  "metadata": {
+    "description": "Marketplace for the roku-mcp Cursor plugin (Roku MCP server, skills, and rules)."
+  },
+  "plugins": [
+    {
+      "name": "roku-mcp",
+      "source": "./",
+      "description": "Roku app automation, profiling, and stream diagnosis for dev devices.",
+      "version": "1.8.0"
+    }
+  ]
+}

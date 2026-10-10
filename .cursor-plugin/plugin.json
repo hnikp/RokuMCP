@@ -1,0 +1,13 @@
+{
+  "name": "roku-mcp",
+  "description": "Roku device automation for Cursor: sideload deploy, ECP remote control, screenshots, debug console, runtime SceneGraph UI editing, BrightScript and Perfetto profiling, and stream failure diagnosis.",
+  "version": "1.8.0",
+  "author": {
+    "name": "jack1590"
+  },
+  "skills": "./skills",
+  "rules": "./rules/cursor",
+  "homepage": "https://github.com/jack1590/RokuMCP#readme",
+  "repository": "https://github.com/jack1590/RokuMCP",
+  "license": "MIT"
+}

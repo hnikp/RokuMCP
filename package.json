@@ -1,6 +1,6 @@
 {
   "name": "roku-mcp",
-  "version": "1.7.0",
+  "version": "1.8.0",
   "description": "MCP server for Roku device automation — deploy, ECP control, screenshots, debug console, and BrightScript profiler analysis",
   "type": "module",
   "main": "dist/index.js",
@@ -37,7 +37,7 @@
     "watch": "tsc --watch",
     "start": "node dist/index.js",
     "build:test": "tsc -p tsconfig.test.json && node -e \"const fs=require('fs');fs.copyFileSync('src/stream/roku-specs.json','dist-test/src/stream/roku-specs.json')\"",
-    "test": "npm run build:test && node --test dist-test/test/diagnose.regression.test.js",
+    "test": "npm run build:test && node --test \"dist-test/test/*.test.js\"",
     "prepublishOnly": "npm test",
     "prepare": "npm run build"
   },
@@ -47,7 +47,7 @@
     "axios": "^1.13.6",
     "bsprof-cli": "^1.0.0",
     "dotenv": "^17.3.1",
-    "fast-xml-parser": "^5.5.9",
+    "fast-xml-parser": "^5.7.0",
     "roku-deploy": "^3.16.3",
     "roku-perfetto": "^1.0.2",
     "zod": "^4.3.6"
@@ -55,5 +55,8 @@
   "devDependencies": {
     "@types/node": "^25.5.0",
     "typescript": "^6.0.2"
+  },
+  "overrides": {
+    "fast-xml-parser": "^5.7.0"
   }
 }
