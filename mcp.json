@@ -1,0 +1,8 @@
+{
+  "mcpServers": {
+    "roku": {
+      "command": "bash",
+      "args": ["${CURSOR_PLUGIN_ROOT}/scripts/launch.sh"]
+    }
+  }
+}

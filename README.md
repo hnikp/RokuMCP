@@ -11,6 +11,15 @@ npm install -g roku-mcp     # optional, global install
 # or just point your client at: npx -y roku-mcp
 ```
 
+### Plugin mode (Claude Code and Cursor)
+
+The repo also ships as a plugin: the MCP server, workflow skills (`skills/`), and Cursor rules, registered together.
+
+- **Claude Code:** `/plugin marketplace add jack1590/RokuMCP` then `/plugin install roku-mcp@roku-mcp-marketplace`. Manifests: `.claude-plugin/`, `.mcp.json`.
+- **Cursor:** manifests in `.cursor-plugin/` and `mcp.json`. Skills in `skills/`, rules in `rules/cursor/`.
+
+Both launch through `scripts/launch.sh`, which runs `npm ci` and `npm run build` on first start (Node 18+). Device host and password come from `ROKU_DEVICE_HOST` / `ROKU_DEVICE_PASSWORD` or a project `.env`.
+
 Configure your AI client below. Every platform uses the same launch line; only the config file and reload step change.
 
 <details>
