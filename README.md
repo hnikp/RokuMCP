@@ -20,7 +20,7 @@ The repo also ships as a plugin: the MCP server, workflow skills (`skills/`), an
 - **Claude Code:** `/plugin marketplace add jack1590/RokuMCP` then `/plugin install roku-mcp@roku-mcp-marketplace`. Manifests: `.claude-plugin/`, `.mcp.json`.
 - **Cursor:** manifests in `.cursor-plugin/` and `mcp.json`. Skills in `skills/`, rules in `rules/cursor/`.
 
-Claude Code asks for the device host and developer password when the plugin is enabled (the password is stored as sensitive). The entry point is `bootstrap.mjs`. Cursor uses `scripts/launch.sh`. Both run `npm ci` and `npm run build` on first start (Node 18+). Outside plugin mode, `ROKU_DEVICE_HOST` / `ROKU_DEVICE_PASSWORD` or a project `.env` still work.
+Claude Code asks for the device host and developer password when the plugin is enabled (the password is stored as sensitive). Both clients use the entry point `bootstrap.mjs`. Both run `npm ci` and `npm run build` on first start (Node 18+). Outside plugin mode, `ROKU_DEVICE_HOST` / `ROKU_DEVICE_PASSWORD` or a project `.env` still work.
 
 Configure your AI client below. Every platform uses the same launch line; only the config file and reload step change.
 

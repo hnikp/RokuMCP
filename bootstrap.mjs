@@ -1,5 +1,5 @@
 #!/usr/bin/env node
-// Plugin entry for Claude Code. Installs deps and builds on first start, then
+// Plugin entry for Claude Code and Cursor. Installs deps and builds on first start, then
 // hands stdio to the server. Install/build output goes to stderr: stdout is the
 // MCP JSON-RPC channel.
 import { existsSync, statSync } from 'node:fs';

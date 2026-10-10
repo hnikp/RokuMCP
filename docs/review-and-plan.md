@@ -5,7 +5,7 @@ Written for: maintainers of roku-mcp. Scope: code, security dependencies, rules 
 ## What changed in this pass
 
 - **Security dependencies.** `npm audit fix` applied, plus a `fast-xml-parser` override (`^5.7.0`) for the nested copy under `roku-perfetto`, which pins `^4.5.0`. Production audit went from 26 findings (1 critical, 15 high) to 4 high, all from `braces`. `braces` has no patched release on npm (advisory covers `<=3.0.3`), so it stays until upstream ships a fix. Build passes and all 11 tests pass. The `ecp` and stream-manifest XML parsers use `XMLParser` with the same options on v5.
-- **Plugin mode.** Claude Code: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.mcp.json`. Cursor: `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, `mcp.json`. Both launch `scripts/launch.sh`, which runs `npm ci` and build on first start. Shared skills live in `skills/` (7 skills). Cursor rules are loaded from `rules/cursor/`.
+- **Plugin mode.** Claude Code: `.claude-plugin/plugin.json`, `.claude-plugin/marketplace.json`, `.mcp.json`. Cursor: `.cursor-plugin/plugin.json`, `.cursor-plugin/marketplace.json`, `mcp.json`. Both launch `bootstrap.mjs`, which runs `npm ci` and build on first start. Shared skills live in `skills/` (7 skills). Cursor rules are loaded from `rules/cursor/`.
 - **Docs.** README gained a plugin-mode section. CHANGELOG has an Unreleased entry.
 
 Not committed. The tree also holds pre-existing uncommitted work (`src/tools/bsprof.ts` cache changes, `test/bsprof.header.test.ts`, the `test` script in `package.json`). Left as is.

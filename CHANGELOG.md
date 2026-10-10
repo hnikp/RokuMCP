@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.3] - 2026-10-10
+
+### Changed
+- Cursor entry is `node ${CURSOR_PLUGIN_ROOT}/bootstrap.mjs` (was a bash wrapper). `scripts/launch.sh` removed.
+
 ## [1.8.2] - 2026-10-10
 
 ### Changed
