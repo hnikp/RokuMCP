@@ -11,7 +11,7 @@
       "name": "roku-mcp",
       "source": "./",
       "description": "Roku app automation, profiling, and stream diagnosis for dev devices.",
-      "version": "1.8.0"
+      "version": "1.8.1"
     }
   ]
 }

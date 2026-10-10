@@ -1,11 +1,25 @@
 {
   "name": "roku-mcp",
-  "description": "Roku device automation for Claude Code: sideload deploy, ECP remote control, screenshots, debug console, runtime SceneGraph UI editing, BrightScript and Perfetto profiling, and stream failure diagnosis.",
-  "version": "1.8.0",
+  "description": "Unofficial. Roku device automation for Claude Code: sideload deploy, ECP remote control, screenshots, debug console, runtime SceneGraph UI editing, BrightScript and Perfetto profiling, and stream failure diagnosis. Not affiliated with or endorsed by Roku, Inc.",
+  "version": "1.8.1",
   "author": {
     "name": "jack1590"
   },
   "homepage": "https://github.com/jack1590/RokuMCP#readme",
   "repository": "https://github.com/jack1590/RokuMCP",
-  "license": "MIT"
+  "license": "MIT",
+  "userConfig": {
+    "ROKU_DEVICE_HOST": {
+      "type": "string",
+      "title": "Roku device host",
+      "description": "IP address or hostname of the Roku dev device. Leave empty to use SSDP discovery.",
+      "sensitive": false
+    },
+    "ROKU_DEVICE_PASSWORD": {
+      "type": "string",
+      "title": "Roku developer password",
+      "description": "Developer mode password set on the Roku device.",
+      "sensitive": true
+    }
+  }
 }

@@ -1,5 +1,12 @@
 # Changelog
 
+## [1.8.1] - 2026-10-10
+
+### Changed
+- Claude Code plugin prompts for `ROKU_DEVICE_HOST` and `ROKU_DEVICE_PASSWORD` (password is `sensitive`) via `userConfig`.
+- Claude Code entry point is `node ${CLAUDE_PLUGIN_ROOT}/bootstrap.mjs` instead of a bash wrapper.
+- README: unofficial/unaffiliated notice.
+
 ## [1.8.0] - 2026-10-10
 
 ### Added

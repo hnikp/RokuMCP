@@ -1,11 +1,11 @@
 {
   "mcpServers": {
     "roku": {
-      "command": "bash",
-      "args": ["${CLAUDE_PLUGIN_ROOT}/scripts/launch.sh"],
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bootstrap.mjs"],
       "env": {
-        "ROKU_DEVICE_HOST": "${ROKU_DEVICE_HOST}",
-        "ROKU_DEVICE_PASSWORD": "${ROKU_DEVICE_PASSWORD}"
+        "ROKU_DEVICE_HOST": "${user_config.ROKU_DEVICE_HOST}",
+        "ROKU_DEVICE_PASSWORD": "${user_config.ROKU_DEVICE_PASSWORD}"
       }
     }
   }
