@@ -14,7 +14,7 @@ import { registerStreamTools } from './tools/stream.js';
 export default function createServer(_options?: { config?: Record<string, string> }) {
   const server = new McpServer({
     name: 'roku-mcp',
-    version: '1.8.3',
+    version: '1.8.4',
   });
 
   registerDeployTools(server);
@@ -49,7 +49,7 @@ if (isDirectRun) {
     const { StdioServerTransport } = await import('@modelcontextprotocol/sdk/server/stdio.js');
     const server = new McpServer({
       name: 'roku-mcp',
-      version: '1.8.3',
+      version: '1.8.4',
     });
 
     registerDeployTools(server);

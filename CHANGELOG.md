@@ -1,5 +1,10 @@
 # Changelog
 
+## [1.8.4] - 2026-10-11
+
+### Fixed
+- Windows: stdio server starts when `process.argv[1]` uses back-slashes (PR #1, thanks @ignaciorevuelta). Affects `bootstrap.mjs` as well.
+
 ## [1.8.3] - 2026-10-10
 
 ### Changed
