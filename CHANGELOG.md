@@ -1,6 +1,6 @@
 # Changelog
 
-## [Unreleased]
+## [1.8.5] - 2026-10-15
 
 ### Added
 - Console capture: `roku_console_capture_start`, `roku_console_wait`, `roku_console_capture_stop`, `roku_console_capture_status`. Keeps port 8085 open, records to a file (VS Code extension naming), skips the replay of the previous session, and waits for a regex line (optional `jwtValid` predicate) without returning raw console text.
