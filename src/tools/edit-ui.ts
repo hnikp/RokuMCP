@@ -314,7 +314,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Edit node failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Edit node failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -344,7 +344,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Set visible failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Set visible failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -375,7 +375,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Move node failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Move node failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -409,7 +409,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Focus node failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Focus node failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -441,7 +441,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Remove node failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Remove node failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -485,7 +485,7 @@ export function registerEditUiTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Create node failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Create node failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -534,7 +534,7 @@ export function registerEditUiTools(server: McpServer): void {
         return { content: [{ type: 'text', text: JSON.stringify(json, null, 2) }], isError: isRtaError(json) || undefined };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Get value failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Get value failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }
@@ -589,7 +589,7 @@ export function registerEditUiTools(server: McpServer): void {
         return { content: [{ type: 'text', text: JSON.stringify(json, null, 2) }], isError: isRtaError(json) || undefined };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Observe field failed: ${friendlyError(error)}${RTA_SETUP_HINT}` }],
+          content: [{ type: 'text', text: `Observe field failed: ${friendlyError(error, 'rta')}${RTA_SETUP_HINT}` }],
           isError: true,
         };
       }

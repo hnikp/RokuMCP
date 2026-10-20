@@ -3,7 +3,26 @@ import { z } from 'zod';
 import { rokuDeploy } from 'roku-deploy';
 import fs from 'fs/promises';
 import path from 'path';
+import os from 'os';
 import { resolveConfig, friendlyError } from '../roku-config.js';
+
+/**
+ * Resolve where roku-deploy's takeScreenshot will write. It joins outDir + outFile + ext,
+ * so an absolute or nested outFile produced paths like ./private/tmp/... ; reject those.
+ */
+export function resolveScreenshotTarget(params: { outDir?: string; outFile?: string }): { outDir: string; outFile?: string } | { error: string } {
+  const outDir = path.resolve(params.outDir?.trim() || os.tmpdir());
+  const outFile = params.outFile?.trim() || undefined;
+  if (outFile !== undefined) {
+    if (path.isAbsolute(outFile) || /[\\/]/.test(outFile)) {
+      return { error: `outFile must be a bare filename without a path (put the folder in outDir): ${outFile}` };
+    }
+    if (outFile === '.' || outFile === '..') {
+      return { error: `outFile must be a filename: ${outFile}` };
+    }
+  }
+  return { outDir, outFile };
+}
 
 export function registerScreenshotTools(server: McpServer): void {
   server.registerTool(
@@ -14,22 +33,26 @@ export function registerScreenshotTools(server: McpServer): void {
         host: z.string().optional().describe('IP address or hostname of the Roku device'),
         password: z.string().optional().describe('Developer password for the Roku device'),
         outDir: z.string().optional().describe('Directory to save the screenshot. Defaults to OS temp directory.'),
-        outFile: z.string().optional().describe('Base filename (without extension). Defaults to timestamped name.'),
+        outFile: z.string().optional().describe('Base filename (without extension or folder; put the folder in outDir). Defaults to timestamped name.'),
       },
     },
     async (params) => {
       try {
+        const target = resolveScreenshotTarget(params);
+        if ('error' in target) {
+          return {
+            content: [{ type: 'text', text: `Screenshot failed: ${target.error}` }],
+            isError: true,
+          };
+        }
         const config = await resolveConfig(params);
         const options: Record<string, unknown> = {
           host: config.host,
           password: config.password,
+          outDir: target.outDir,
         };
-
-        if (params.outDir) {
-          options.outDir = params.outDir;
-        }
-        if (params.outFile) {
-          options.outFile = params.outFile;
+        if (target.outFile) {
+          options.outFile = target.outFile;
         }
 
         const filePath = await rokuDeploy.takeScreenshot(options as any);
@@ -53,7 +76,7 @@ export function registerScreenshotTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Screenshot failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Screenshot failed: ${friendlyError(error, 'device-web')}` }],
           isError: true,
         };
       }

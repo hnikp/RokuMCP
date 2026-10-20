@@ -209,7 +209,7 @@ export function registerConsoleCaptureTools(server: McpServer): void {
         return { content: [{ type: 'text', text: `Capturing ${host}:${CONSOLE_PORT} to ${file}.${note}` }] };
       } catch (error) {
         if (capture) await endCapture(capture);
-        return { content: [{ type: 'text', text: `Console capture failed: ${friendlyError(error)}` }], isError: true };
+        return { content: [{ type: 'text', text: `Console capture failed: ${friendlyError(error, 'console')}` }], isError: true };
       }
     }
   );
@@ -237,7 +237,7 @@ export function registerConsoleCaptureTools(server: McpServer): void {
       try {
         regex = new RegExp(params.pattern);
       } catch (error) {
-        return { content: [{ type: 'text', text: `Invalid pattern: ${friendlyError(error)}` }], isError: true };
+        return { content: [{ type: 'text', text: `Invalid pattern: ${friendlyError(error, 'console')}` }], isError: true };
       }
       const predicate = params.predicate as WaitPredicate | undefined;
 

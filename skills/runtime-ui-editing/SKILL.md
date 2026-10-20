@@ -17,6 +17,9 @@ RTA is the On-Device Component on TCP 9000. It is not the debug console.
 
 Use `uiElementId` (`RTA_<digits>`). Never use `name`: it is not addressable and the call returns OK with no visible change.
 
+- No `uiElementId` attributes in app-ui does not mean no RTA. Builds that include the roku-test-automation ODC have port 9000 open anyway (verified: no `RTA_` ids, port open). Address nodes by keyPath or the `focusedNode` base instead.
+- Most precise focus query: RTA `getFocusedNode` with `includeKeyPath: true`. If it hangs, the app is stopped in the debugger.
+
 ## Workflow: "change the title to X"
 
 1. `roku_query_app_ui`, find the element with the visible text. Copy its `uiElementId`.

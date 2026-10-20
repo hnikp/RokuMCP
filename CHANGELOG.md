@@ -1,5 +1,21 @@
 # Changelog
 
+## [1.9.0] - 2026-10-20
+
+### Added
+- `roku_long_press {key, holdMs=1500}`: holds a key (ECP keydown … keyup).
+- `roku_deploy`: `zipPath`, an absolute path to a prebuilt `.zip` (mutually exclusive with `rootDir`). For projects that build their own package (BrighterScript/ropm builds, component-library apps).
+- Env aliases: host also from `ROKU_DEV_TARGET`, password also from `ROKU_DEVPASSWORD` (roku-deploy/BrighterScript convention). Empty strings count as unset.
+- Skill `scenegraph-pitfalls`: SceneGraph/BrightScript/BrighterScript pitfalls (symptom → cause → fix) found on Roku OS 15.3.
+- Skills `ecp-control`, `deploy-debug`, `runtime-ui-editing`, `install`: device lessons (screenshot latency and graphics-plane-only capture, Options key grabbed during fullscreen video, one client on port 8085, `nc -d`, test packages sharing the registry, `Missing or invalid PHY`, RTA without `uiElementId`).
+
+### Changed
+- `roku_get_focused_node` walks the focus chain and returns `{focused, path}`. `query/app-ui` marks every node on the chain `focused="true"` (plus RowList current cells and some checked items), so the first match was usually an ancestor.
+- An ECP 403 now explains the fix: Settings → System → Advanced system settings → Control by mobile apps → Network access = "Permissive".
+
+### Fixed
+- `roku_screenshot` rejects an `outFile` containing a path separator; `outDir` is resolved to an absolute path.
+
 ## [1.8.5] - 2026-10-15
 
 ### Added

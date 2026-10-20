@@ -14,7 +14,7 @@ Whatever name the user gave this MCP server in their client config (typically `r
 |---|---|
 | Discovery & device | `roku_discover`, `roku_query_device_info`, `roku_query_active_app`, `roku_sleep` |
 | Deploy | `roku_deploy`, `roku_delete_dev_channel`, `roku_launch` |
-| Remote control (ECP) | `roku_keypress`, `roku_keypress_sequence`, `roku_type_text` |
+| Remote control (ECP) | `roku_keypress`, `roku_keypress_sequence`, `roku_long_press`, `roku_type_text` |
 | Inspection | `roku_screenshot`, `roku_query_app_ui`, `roku_query_sg_nodes`, `roku_find_node`, `roku_get_focused_node`, `roku_query_media_player` |
 | Debug console (port 8085) | `roku_console_connect`, `roku_console_send`, `roku_console_read`, `roku_console_disconnect`, `roku_console_capture_start`, `roku_console_wait`, `roku_console_capture_stop`, `roku_console_capture_status` |
 | Runtime UI editing (RTA, port 9000) | `roku_edit_node`, `roku_set_node_visible`, `roku_move_node`, `roku_focus_node`, `roku_remove_node`, `roku_create_node`, `roku_get_value`, `roku_observe_field` |
@@ -40,10 +40,12 @@ Optional fallback: when no `errorInfo` is provided and a device is available, se
 Every tool accepts `host` (and `password` for deploy/screenshot). Resolution order:
 
 1. Explicit `host` / `password` tool params (use these whenever the user gave you a specific device).
-2. `ROKU_DEVICE_HOST` / `ROKU_DEVICE_PASSWORD` env vars (also auto-loaded from a project-local `.env`).
+2. `ROKU_DEVICE_HOST` / `ROKU_DEVICE_PASSWORD` env vars, else the roku-deploy/BrighterScript aliases `ROKU_DEV_TARGET` / `ROKU_DEVPASSWORD`. All four are also auto-loaded from a project-local `.env`; empty strings count as unset.
 3. SSDP auto-discovery — resolves `host` only. Password must still come from #1 or #2.
 
 If a tool returns "Could not resolve the Roku device hostname" or "developer password is required", surface the missing piece to the user; do not invent an IP or password.
+
+An ECP 403 on keypresses means the device blocks network control: Settings → System → Advanced system settings → Control by mobile apps → Network access must be "Permissive".
 
 ## The canonical loop
 
@@ -60,6 +62,10 @@ roku_screenshot                       # optional pixel-level verify
 
 - Always pause between key presses with `roku_sleep` (500–2000 ms). Without it the UI may not be settled when you `roku_find_node`.
 - For text fields: first focus with `roku_keypress` (or RTA `roku_focus_node`), then `roku_type_text`.
+- `roku_get_focused_node` walks the focus chain and returns `{focused, path}`. `query/app-ui` marks **every** node on the chain `focused="true"` (plus RowList current cells and some checked items), so don't grep app-ui for `focused="true"`.
+- `roku_long_press key=<Key> holdMs=1500` holds a key (keydown … keyup).
+- Screenshots take ~8 s and contain only the graphics plane (video is a black rectangle). Auto-hiding player chrome (~5 s) is gone by then: send the whole key sequence, then screenshot. `outFile` must be a bare name (no path separator).
+- During fullscreen video Roku OS grabs the Options (`*`) key. If every keypress is ignored and RTA hangs, the app is stopped in the debugger: read the console.
 - For video tests: `roku_query_media_player` is the source of truth (`state` ∈ `{play, pause, buffer, stop, none}`, plus `position`, `duration`, `error`).
 - `roku_console_send` / `roku_console_read` **auto-disconnect** after each call; don't expect a persistent debugger session.
 
@@ -75,7 +81,7 @@ roku_console_wait pattern="<regex>" [predicate=jwtValid] [timeoutMs=120000]
 roku_console_capture_stop
 ```
 
-- Port 8085 accepts **one client**. Detach the VS Code BrightScript debugger first; while a capture is active, `roku_console_connect` is refused.
+- Port 8085 accepts **one client**: the VS Code debugger, a Rooibos/test runner, `nc` captures and the capture tools kick each other off. Detach the others first; while a capture is active, `roku_console_connect` is refused.
 - `roku_console_wait` returns `{matched, lineNumber, timestamp, preview}` with tokens redacted. Read the full line from the capture file, never paste raw console output into chat.
 - `reason: "waiting_for_debugger"` means the channel was sideloaded by the VS Code debugger and is blocked on port 8081: redeploy with `roku_deploy`.
 - `reason: "timeout"` after `roku_launch restart=true`: the channel probably instant-resumed (no startup code ran). Use `roku_deploy` for a cold start.
@@ -91,6 +97,8 @@ The `roku_edit_node` family talks to the RTA **On-Device Component** on TCP port
    - `roku_query_sg_nodes type=roots` shows `<RTA_OnDeviceComponent …>`, OR
    - Every node in `roku_query_app_ui` has a `uiElementId="RTA_<digits>"` attribute, OR
    - The device log shows `[RTA][INFO] OnDeviceComponent init` at channel launch.
+
+   No `uiElementId` attributes does not prove RTA is absent: builds that include the roku-test-automation ODC can have port 9000 open without them. Then address nodes by keyPath or the `focusedNode` base; RTA `getFocusedNode` with `includeKeyPath` is the most precise focus query.
 
    If RTA is missing, every edit-UI tool returns connection-refused. Tell the user to enable RTA via either:
    - `"injectRdbOnDeviceComponent": true` in `launch.json` **plus** the marker comment `' vscode_rdb_on_device_component_entry` immediately after `screen.show()` in `main()`, or
@@ -120,7 +128,9 @@ Workflow when the user says "change the title to X":
 
 ## Deploy
 
-`roku_deploy` requires `rootDir` pointing at a folder containing a `manifest` file. It packages and uploads via the underlying `roku-deploy` library. If a dev channel is already running, it is replaced.
+`roku_deploy` requires `rootDir` pointing at a folder containing a `manifest` file, or `zipPath` (see below). It packages and uploads via the underlying `roku-deploy` library. If a dev channel is already running, it is replaced.
+
+Projects that build their own package (BrighterScript/ropm builds, component-library apps): run the build, then pass `zipPath` (absolute path to the prebuilt `.zip`) instead of `rootDir`. The two are mutually exclusive.
 
 When asked to deploy a workspace:
 1. Verify the manifest exists at `<rootDir>/manifest` before calling the tool.
@@ -149,5 +159,7 @@ When the user asks for an end-to-end test:
 - Don't open multiple debug-console sessions; each `roku_console_send`/`read` opens, runs, and closes.
 - Don't pass `nodeId: "<some name attribute>"` to edit-UI tools and call it done without a `roku_get_value` readback.
 - Don't mutate fields on RowList row children expecting them to stick — change the underlying `ContentNode` instead.
+- Don't run a unit-test package without backing up the registry: it sideloads over the dev channel and shares its registry (logins, settings). Redeploy the real app and restore afterwards.
+- Don't fire blind key sequences that end in Select when focus is uncertain: one changed a device-wide caption setting. Screenshot first.
 - Don't assume Perfetto works on Roku OS <15.1 — fall back to `.bsprof` instead.
 - Don't invent IP addresses or passwords. If neither tool param, env, nor SSDP discovery yields a host, ask the user.

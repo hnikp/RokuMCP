@@ -4,6 +4,7 @@ import axios from 'axios';
 import { XMLParser } from 'fast-xml-parser';
 import { resolveHost, friendlyError } from '../roku-config.js';
 import { discoverRokuDevices } from '../discovery.js';
+import { findFocusPath } from './focus-path.js';
 
 const xmlParser = new XMLParser({ ignoreAttributes: false, attributeNamePrefix: '@_' });
 
@@ -34,7 +35,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Discovery failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Discovery failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -59,7 +60,45 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Key press failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Key press failed: ${friendlyError(error, 'ecp')}` }],
+          isError: true,
+        };
+      }
+    }
+  );
+
+  server.registerTool(
+    'roku_long_press',
+    {
+      description: 'Hold a key down on the Roku device via ECP (keydown, wait, keyup). Use for long-press behaviour such as fast scrolling, OK-hold menus, or holding Rev/Fwd.',
+      inputSchema: {
+        host: z.string().optional().describe('IP address or hostname of the Roku device'),
+        key: z.string().describe('The key to hold (e.g. Select, Right, Fwd, Rev)'),
+        holdMs: z
+          .number()
+          .optional()
+          .default(1500)
+          .describe('How long to hold the key in milliseconds (default 1500, clamped to 100..10000)'),
+      },
+    },
+    async (params) => {
+      try {
+        const host = await resolveHost(params);
+        const holdMs = Math.min(Math.max(params.holdMs ?? 1500, 100), 10_000);
+        const key = encodeURIComponent(params.key);
+        await axios.post(ecpUrl(host, `keydown/${key}`));
+        try {
+          await new Promise((r) => setTimeout(r, holdMs));
+        } finally {
+          // Always release, or the device keeps acting as if the key is held.
+          await axios.post(ecpUrl(host, `keyup/${key}`));
+        }
+        return {
+          content: [{ type: 'text', text: `Long press sent: ${params.key} held for ${holdMs}ms` }],
+        };
+      } catch (error) {
+        return {
+          content: [{ type: 'text', text: `Long press failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -95,7 +134,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Key sequence failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Key sequence failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -138,7 +177,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Launch failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Launch failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -163,7 +202,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Query device info failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Query device info failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -188,7 +227,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Query active app failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Query active app failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -212,7 +251,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Query app UI failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Query app UI failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -252,7 +291,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Query SG nodes failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Query SG nodes failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -288,7 +327,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Type text failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Type text failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -313,7 +352,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Query media player failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Query media player failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -390,7 +429,7 @@ export function registerEcpTools(server: McpServer): void {
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Find node failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Find node failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }
@@ -400,7 +439,7 @@ export function registerEcpTools(server: McpServer): void {
   server.registerTool(
     'roku_get_focused_node',
     {
-      description: 'Get the currently focused node in the app UI tree. Returns the node with all its properties (id, subtype, text, bounds, etc.). Only works when a sideloaded dev channel is running.',
+      description: 'Get the currently focused node in the app UI tree. Follows the focus chain (every ancestor of the focused node is also marked focused) down to the leaf. Returns { focused: <leaf attributes: name, id, index, bounds, text, etc.>, path: ["<tag>#<name or id>", ...] } from the screen to the leaf. Only works when a sideloaded dev channel is running.',
       inputSchema: {
         host: z.string().optional().describe('IP address or hostname of the Roku device'),
       },
@@ -411,47 +450,21 @@ export function registerEcpTools(server: McpServer): void {
         const response = await axios.get(ecpUrl(host, 'query/app-ui'));
         const parsed = xmlParser.parse(response.data);
 
-        let focused: Record<string, unknown> | null = null;
+        // Every node on the focus chain has focused="true"; walk it down to the leaf.
+        const result = findFocusPath(parsed);
 
-        function findFocused(node: unknown): void {
-          if (focused || !node || typeof node !== 'object') return;
-          const n = node as Record<string, unknown>;
-
-          if (n['@_focused'] === 'true' || n['@_focused'] === true) {
-            const attrs: Record<string, unknown> = {};
-            for (const [k, v] of Object.entries(n)) {
-              if (k.startsWith('@_')) {
-                attrs[k.slice(2)] = v;
-              }
-            }
-            focused = attrs;
-            return;
-          }
-
-          for (const v of Object.values(n)) {
-            if (focused) return;
-            if (Array.isArray(v)) {
-              v.forEach(findFocused);
-            } else if (typeof v === 'object' && v !== null) {
-              findFocused(v);
-            }
-          }
-        }
-
-        findFocused(parsed);
-
-        if (!focused) {
+        if (!result) {
           return {
             content: [{ type: 'text', text: 'No focused node found in the current UI tree.' }],
           };
         }
 
         return {
-          content: [{ type: 'text', text: JSON.stringify(focused, null, 2) }],
+          content: [{ type: 'text', text: JSON.stringify(result, null, 2) }],
         };
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Get focused node failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Get focused node failed: ${friendlyError(error, 'ecp')}` }],
           isError: true,
         };
       }

@@ -85,7 +85,7 @@ export function registerConsoleTools(server: McpServer): void {
             }
             if (!newSession.connected) {
               resolve({
-                content: [{ type: 'text', text: `Console connection failed: ${friendlyError(err)}` }],
+                content: [{ type: 'text', text: `Console connection failed: ${friendlyError(err, 'console')}` }],
                 isError: true,
               });
             }
@@ -93,7 +93,7 @@ export function registerConsoleTools(server: McpServer): void {
         });
       } catch (error) {
         return {
-          content: [{ type: 'text', text: `Console connect failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Console connect failed: ${friendlyError(error, 'console')}` }],
           isError: true,
         };
       }
@@ -178,7 +178,7 @@ export function registerConsoleTools(server: McpServer): void {
       } catch (error) {
         if (session) { session.socket.destroy(); session = null; }
         return {
-          content: [{ type: 'text', text: `Console send failed: ${friendlyError(error)}` }],
+          content: [{ type: 'text', text: `Console send failed: ${friendlyError(error, 'console')}` }],
           isError: true,
         };
       }

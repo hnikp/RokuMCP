@@ -13,10 +13,20 @@ description: Sideload a Roku BrightScript/SceneGraph app to a dev device, redepl
 
 A running dev channel is replaced. `roku_delete_dev_channel` removes it.
 
+### Prebuilt package
+
+Projects that build their own zip (BrighterScript/ropm builds, component-library apps): run the project's build, then `roku_deploy zipPath=<absolute path to .zip>`. `zipPath` and `rootDir` are mutually exclusive.
+
+- Component-library apps (a small app that loads a lib from a URL in debug, with an embedded fallback): deploy the app zip with `zipPath`.
+- Running a unit-test package sideloads over the dev channel AND shares its registry: it can wipe logins and settings. Back up the registry first; afterwards redeploy the real app and restore.
+
 ## Console
 
 - `roku_console_send` and `roku_console_read` each open, run, and close the connection. Do not expect a persistent session.
 - Read after a repro step, not in a loop.
+- Port 8085 takes one client. The VS Code debugger, a Rooibos/test runner, `nc` captures and `roku_console_capture_*` all kick each other off.
+- Capturing by hand: `nc -d <host> 8085 >> log`. Without `-d`, a backgrounded nc exits on stdin EOF.
+- `Missing or invalid PHY: /RokuOS/Artwork/...` means OS artwork the app relies on is absent on this firmware. Bundle your own images.
 
 ## Capture to a file and wait for a line
 

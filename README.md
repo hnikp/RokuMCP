@@ -217,6 +217,10 @@ The agent will `roku_query_app_ui` to locate the node, grab the `uiElementId`, c
 |---|---|
 | `ROKU_DEVICE_HOST` | IP address or hostname of the Roku device |
 | `ROKU_DEVICE_PASSWORD` | Developer password for the Roku device |
+| `ROKU_DEV_TARGET` | Alias for the host (roku-deploy/BrighterScript convention), used when `ROKU_DEVICE_HOST` is unset |
+| `ROKU_DEVPASSWORD` | Alias for the password, used when `ROKU_DEVICE_PASSWORD` is unset |
+
+Empty values count as unset.
 
 Both can also be passed as parameters on each tool call, which override the environment variables.
 
@@ -250,7 +254,7 @@ Or simply add the two expected variables to your `.env` alongside your existing 
 
 | Tool | Description |
 |---|---|
-| `roku_deploy` | Sideload (deploy) a Roku app to the device. Stages in a temp folder (`stagingDir` overrides) so a project `bsconfig.json` can't make it wipe `rootDir` |
+| `roku_deploy` | Sideload (deploy) a Roku app to the device. Stages in a temp folder (`stagingDir` overrides) so a project `bsconfig.json` can't make it wipe `rootDir`. `zipPath` deploys a prebuilt `.zip` instead (mutually exclusive with `rootDir`) |
 | `roku_delete_dev_channel` | Delete the currently sideloaded developer channel |
 
 ### Discovery
@@ -265,6 +269,7 @@ Or simply add the two expected variables to your `.env` alongside your existing 
 |---|---|
 | `roku_keypress` | Send a single key press (Home, Select, Up, Down, Left, Right, Back, etc.) |
 | `roku_keypress_sequence` | Send multiple key presses in sequence with configurable delay |
+| `roku_long_press` | Hold a key (keydown, wait `holdMs`, default 1500, keyup) |
 | `roku_type_text` | Type a text string into the focused field (e.g. email, password, search) |
 | `roku_launch` | Launch or deep-link into a channel (`restart: true` exits it first) |
 | `roku_query_device_info` | Get device model, firmware, serial number, network info |
@@ -273,7 +278,7 @@ Or simply add the two expected variables to your `.env` alongside your existing 
 | `roku_query_app_ui` | Get the current app UI tree as XML |
 | `roku_query_sg_nodes` | Query SceneGraph nodes (all, roots, or by node ID) |
 | `roku_find_node` | Search the UI tree for a node by ID or attribute (subtype, text, etc.) |
-| `roku_get_focused_node` | Get the currently focused node with all its properties |
+| `roku_get_focused_node` | Follow the focus chain from the root and return the focused node and its `path` |
 | `roku_sleep` | Wait for a specified duration (useful between navigation steps) |
 
 ### Screenshot
