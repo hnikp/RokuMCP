@@ -1,7 +1,7 @@
 {
   "name": "roku-mcp",
   "description": "Unofficial. Roku device automation for Claude Code: sideload deploy, ECP remote control, screenshots, debug console, runtime SceneGraph UI editing, BrightScript and Perfetto profiling, and stream failure diagnosis. Not affiliated with or endorsed by Roku, Inc.",
-  "version": "1.8.5",
+  "version": "1.9.0",
   "author": {
     "name": "jack1590"
   },
