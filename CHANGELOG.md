@@ -14,6 +14,8 @@
 - An ECP 403 now explains the fix: Settings → System → Advanced system settings → Control by mobile apps → Network access = "Permissive".
 
 ### Fixed
+
+- `roku_deploy` no longer deletes the installed channel first (roku-deploy's default). Deleting a dev channel wipes its registry, so every deploy logged the user out. New `deleteInstalledChannel` param (default false) for a clean start.
 - `roku_screenshot` rejects an `outFile` containing a path separator; `outDir` is resolved to an absolute path.
 
 ## [1.8.5] - 2026-10-15

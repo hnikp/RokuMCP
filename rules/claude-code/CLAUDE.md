@@ -112,7 +112,7 @@ Workflow when the user says "change the title to X":
 
 ## Deploy
 
-`roku_deploy` requires `rootDir` pointing at a folder containing a `manifest` file, or `zipPath` (see below). It packages and uploads via the existing `roku-deploy` library. If a dev channel is already running, it is replaced.
+`roku_deploy` requires `rootDir` pointing at a folder containing a `manifest` file, or `zipPath` (see below). It packages and uploads via the existing `roku-deploy` library. If a dev channel is already running, it is replaced and its registry survives. `deleteInstalledChannel=true` (default false; roku-deploy's own default is true) and `roku_delete_dev_channel` wipe the channel registry, i.e. the user's logins and settings: never use them on a device someone uses without asking.
 
 Projects that build their own package (BrighterScript/ropm builds, component-library apps): run the build, then pass `zipPath` (absolute path to the prebuilt `.zip`) instead of `rootDir`. The two are mutually exclusive.
 

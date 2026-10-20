@@ -57,6 +57,11 @@ export function registerDeployTools(server: McpServer): void {
           .string()
           .optional()
           .describe('Scratch folder roku-deploy empties, fills and deletes. Defaults to a unique temp folder; must not be rootDir.'),
+        deleteInstalledChannel: z
+          .boolean()
+          .optional()
+          .default(false)
+          .describe('Delete the installed dev channel before uploading. This also wipes the channel registry (logins, settings); the upload replaces the channel anyway, so leave it false unless a clean registry is wanted'),
       },
     },
     async (params) => {
@@ -81,8 +86,10 @@ export function registerDeployTools(server: McpServer): void {
             };
           }
           const config = await resolveConfig(params);
-          // Same as deploy(): clear the old channel first, ignoring failure (none installed).
-          await rokuDeploy.deleteInstalledChannel({ host: config.host, password: config.password }).catch(() => undefined);
+          if (params.deleteInstalledChannel) {
+            // Ignore failure: no channel installed.
+            await rokuDeploy.deleteInstalledChannel({ host: config.host, password: config.password }).catch(() => undefined);
+          }
           // publish() uploads outDir/outFile; outFile keeps its .zip (getOutputZipFilePath only appends one when missing).
           await rokuDeploy.publish({
             host: config.host,
@@ -126,6 +133,8 @@ export function registerDeployTools(server: McpServer): void {
           stagingDir,
           files: params.files && params.files.length > 0 ? params.files : ['**/*'],
           retainStagingDir: false,
+          // roku-deploy defaults this to true, and deleting the dev channel wipes its registry.
+          deleteInstalledChannel: params.deleteInstalledChannel ?? false,
         };
 
         await rokuDeploy.deploy(deployOptions);

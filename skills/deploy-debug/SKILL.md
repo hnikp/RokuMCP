@@ -11,7 +11,7 @@ description: Sideload a Roku BrightScript/SceneGraph app to a dev device, redepl
 2. `roku_deploy` with `rootDir` (absolute path). Pass `files` only for a non-default glob; the default is `**/*`.
 3. `roku_sleep` 3000–5000 ms before any UI interaction so the channel finishes launching.
 
-A running dev channel is replaced. `roku_delete_dev_channel` removes it.
+A running dev channel is replaced; its registry (logins, settings) survives. Deleting the channel wipes the registry: `roku_delete_dev_channel` and `roku_deploy deleteInstalledChannel=true` do that. roku-deploy's own `deploy()` deletes by default; this tool sets it to false.
 
 ### Prebuilt package
 
